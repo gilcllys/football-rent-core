@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from core import models
+from django.contrib.auth.models import User
 
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Usuario
+        model = User
         fields = '__all__'

@@ -27,8 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = 'core.Usuario'
-
 
 # Application definition
 
@@ -80,7 +78,7 @@ WSGI_APPLICATION = 'football_rent.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'footballRent2', 
+        'NAME': 'coreData', 
         'USER': 'postgres',
         'PASSWORD': '123456',
         'HOST': '127.0.0.1', 
