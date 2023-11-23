@@ -15,3 +15,7 @@ class Usuario_serializer_validate(serializers.Serializer):
         required=True, 
         allow_null=False, 
     )
+    group = serializers.CharField(
+        required=True, 
+        allow_null=False, 
+    )

@@ -1,10 +1,30 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from django.contrib.auth.models import User
+from core import models
 from core import serializers
-from core import actions, validate_serializers
+from core import behavior, validate_serializers
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+
+
+class CustomAuthToken(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = validate_serializers.Usuario_serializer_validate(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        user = behavior.UserBeehavior(data=data).run()
+        token = Token.objects.get_or_create(user=user[0])
+        return Response({
+            'token': token[0].pk,
+            'user_id': user[0].pk,
+            'email': user[0].email,
+            'message':user[1]
+        })
+
 
 
 class UsuarioViewSet(viewsets.ModelViewSet):
@@ -16,19 +36,11 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         serializer = validate_serializers.Usuario_serializer_validate(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
-            actions.UserActions.create_employee(data)
+            behavior.UserBeehavior(data=data).run()
             return Response({"Response":serializer.data})
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
-    @action(detail=False, methods=['POST'])
-    def register_managers(self,request):
-        
-        pass
-    @action(detail=False, methods=['POST'])
-    def register_costomers(self,request):
-    
-        pass
     
     @action(detail=True, methods=['GET'])
     def login(self,request):
@@ -37,3 +49,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['POST'])
     def logout(self,request):
         pass
+    
+class ReservaViewSet(viewsets.ModelViewSet):
+    queryset = models.Reserva.objects.all()
+    serializer_class = serializers.ReservaSerializer
