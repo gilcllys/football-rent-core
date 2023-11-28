@@ -10,14 +10,48 @@ class ModelBase(models.Model):
     class Meta:
         abstract = True
         
-
-class Reserva(ModelBase):
-    clientes = models.ForeignKey(
-        to=User,
-        db_column= _('cliente_id'),
+class FootballField(ModelBase):
+    name = models.CharField(
+        max_length=128,
+        null=False,
+        blank=False,
+        db_column=_('name')
+    )
+    description = models.CharField(
+        max_length=144,
+        null=True,
+        blank=True,
+        db_column= _('description')
+    )
+    class Meta:
+        verbose_name = _("Football field")
+        verbose_name_plural = _("Football field")
+        
+class FootballFieldImage(ModelBase):
+    footfield = models.ForeignKey(
+        to=FootballField,
+        on_delete=models.CASCADE,
+        db_index=False,
+        null=False,
+        db_column= _('football_field_id')
+    )
+    image = models.ImageField(
         blank=False,
         null=False,
-        on_delete=models.DO_NOTHING  
+        db_column= _('image')
+    )
+    class Meta:
+        verbose_name = _("Football field Image")
+        verbose_name_plural = _("Football field Image")
+        
+
+class Reserva(ModelBase):
+    user = models.ForeignKey(
+        to=User,
+        db_column= _('user_id'),
+        db_index=False,
+        null=False,
+        on_delete=models.CASCADE  
     )
     date = models.DateTimeField(
         db_column= _('date_time_dt'),
@@ -28,7 +62,7 @@ class Reserva(ModelBase):
         default=False,
         null=False,
         blank=False,
-        db_column=_('payment_bool')
+        db_column=_('payment')
     )
 
     class Meta:
