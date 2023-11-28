@@ -53,3 +53,11 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 class ReservaViewSet(viewsets.ModelViewSet):
     queryset = models.Reserva.objects.all()
     serializer_class = serializers.ReservaSerializer
+
+class FootballFieldViewSet(viewsets.ModelViewSet):
+    queryset = models.FootballField.objects.all()
+    serializer_class = serializers.FootballFieldSerializer
+    
+class FootballFieldImageViewSet(viewsets.ModelViewSet):
+    queryset = models.FootballFieldImage.objects.all()
+    serializer_class = serializers.FootballFieldImageSerializer
