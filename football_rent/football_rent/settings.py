@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'football_rent.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'coreData2', 
+        'NAME': 'teste', 
         'USER': 'postgres',
         'PASSWORD': '123456',
         'HOST': '127.0.0.1', 
