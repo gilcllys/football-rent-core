@@ -13,10 +13,10 @@ from rest_framework.authtoken.models import Token
 class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
-        serializer = validate_serializers.Usuario_serializer_validate(data=request.data)
+        serializer = validate_serializers.UsuarioSerializerValidate(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-        user = behavior.UserBeehavior(data=data).run()
+        user = behavior.UserBehavior(data=data).run()
         token = Token.objects.get_or_create(user=user[0])
         return Response({
             'token': token[0].pk,
@@ -33,18 +33,25 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def register_employees(self,request):
-        serializer = validate_serializers.Usuario_serializer_validate(data=request.data)
+        serializer = validate_serializers.UsuarioSerializerValidate(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
-            behavior.UserBeehavior(data=data).run()
+            behavior.UserBehavior(data=data).run()
             return Response({"Response":serializer.data})
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
     
-    @action(detail=True, methods=['GET'])
+    @action(detail=False, methods=['GET'])
     def login(self,request):
-        pass
+        serializer = validate_serializers.LoginSerializerValidate(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+            result = behavior.LoginBehavior(data=data).run()
+            return Response({"Response":result})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=True, methods=['POST'])
     def logout(self,request):

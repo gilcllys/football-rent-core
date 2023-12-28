@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User, Group
 from django.utils.translation import gettext as _
+from rest_framework.exceptions import AuthenticationFailed
 
-class UserBeehavior():
+class UserBehavior():
     def __init__(self, data):
         self.data = data
     
@@ -43,4 +44,27 @@ class UserBeehavior():
             return [self.verifyUserExistence(), _("This user already exist")]
         else:
             return [self.add_user_to_group(), _("New user saved")]
-       
+
+class LoginBehavior():
+    def __init__(self, data):
+        self.data = data
+        self.user = self.verifyUserExistence()
+        
+    def verifyUserExistence(self):
+        return User.objects.filter(
+            username=self.data.get('username'),
+            email= self.data.get('email'),
+        ).first()
+    
+    def getToken(self):
+        token = Token.objects.get(user=self.user)
+        return token.key
+    
+    def run(self):
+        if(self.verifyUserExistence()):
+            return {
+                "email": self.user.email,
+                "token": self.getToken()
+                }
+        else:
+            return AuthenticationFailed(_("User do not exist"))
