@@ -4,7 +4,7 @@ from django.db import migrations
 from django.contrib.auth.models import Group, Permission
 
 def create_group(apps, schema_editor):
-    group_list = ['Funcionarios','Clientes', 'Gerentes']
+    group_list = ['Funcionarios','Clientes']
     for group in group_list:
         new_group = Group(name=group)
         new_group.save()    

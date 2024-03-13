@@ -1,20 +1,15 @@
 from django.contrib.auth.models import User, Group
 from django.utils.translation import gettext as _
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.authtoken.models import Token
 
 class UserBehavior():
     def __init__(self, data):
         self.data = data
-    
-    def verifyUserExistence(self):
-        return User.objects.filter(
-            username=self.data.get('username'),
-            email= self.data.get('email'),
-        ).first()
-    
-    def  create_general_user(self):
+                
+    def  create_user(self) -> User:
         try:
-            if self.data.get("group") in ['Funcionarios','Clientes']:
+            if self.data.get("group") in ['Clientes']:
                 user: User =  User.objects.create_user(
                         username=self.data.get('username'),
                         email= self.data.get('email'),
@@ -26,24 +21,46 @@ class UserBehavior():
                         email= self.data.get('email'),
                         password=self.data.get('password')
                     )
-            return user
+            return self.add_user_to_group(user)
         except Exception as e:
             return e
     
-    def  add_user_to_group(self):
+    def  add_user_to_group(self, created_user: User) -> User:
         try:
-            user = self.create_general_user()
             group = Group.objects.get(name=self.data.get("group"))
-            user.groups.add(group)
-            return user
+            created_user.groups.add(group)
+            return created_user
         except Exception as e:
             return e
+        
+    def create_token(self, user: User):
+        try:
+            token, created = Token.objects.get_or_create(user=user)
+            return token.key
+        except Exception as e:
+            return e
+        
+    def verifyUserExistence(self):
+        return User.objects.filter(
+            username=self.data.get('username'),
+            email= self.data.get('email'),
+        ).first()
+
 
     def run(self):
         if self.verifyUserExistence():
-            return [self.verifyUserExistence(), _("This user already exist")]
+            return {
+            "response": "Já existe uma conta com esses dados"
+            }
         else:
-            return [self.add_user_to_group(), _("New user saved")]
+            user : User = self.create_user()
+            return {
+                "response": "Salvo com sucesso",
+                "contente" : {
+                    "user" : user.username,
+                    "token": self.create_token(user)
+                }
+            }
 
 class LoginBehavior():
     def __init__(self, data):
@@ -67,4 +84,4 @@ class LoginBehavior():
                 "token": self.getToken()
                 }
         else:
-            return AuthenticationFailed(_("User do not exist"))
+            return {"message": "Essa conta não existe"}

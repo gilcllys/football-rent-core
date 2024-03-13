@@ -58,11 +58,12 @@ class Reserva(ModelBase):
         blank=False,
         null=False
     )
-    payment = models.BooleanField(
-        default=False,
+    football_field = models.ForeignKey(
+        to=FootballField,
+        db_index=False,
         null=False,
-        blank=False,
-        db_column=_('payment')
+        on_delete=models.CASCADE, 
+        db_column=_('football_field_id')
     )
 
     class Meta:
