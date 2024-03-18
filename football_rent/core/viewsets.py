@@ -32,9 +32,6 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = serializers.UsuarioSerializer
     
-    @action(detail=True, methods=['POST'])
-    def logout(self,request):
-        pass
     
 class ReservaViewSet(viewsets.ModelViewSet):
     queryset = models.Reserva.objects.all()
@@ -47,3 +44,7 @@ class FootballFieldViewSet(viewsets.ModelViewSet):
 class FootballFieldImageViewSet(viewsets.ModelViewSet):
     queryset = models.FootballFieldImage.objects.all()
     serializer_class = serializers.FootballFieldImageSerializer
+    
+class PaymentViewSet(viewsets.ModelViewSet):
+    queryset = models.Payment.objects.all()
+    serializer_class = serializers.PaymentSerializer

@@ -2,6 +2,7 @@ from django.contrib.auth.models import User, Group
 from django.utils.translation import gettext as _
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authtoken.models import Token
+from django.db.models import Q
 
 class UserBehavior():
     def __init__(self, data):
@@ -42,8 +43,7 @@ class UserBehavior():
         
     def verifyUserExistence(self):
         return User.objects.filter(
-            username=self.data.get('username'),
-            email= self.data.get('email'),
+            Q(username=self.data.get('username')) | Q( email= self.data.get('email')),
         ).first()
 
 
@@ -69,7 +69,6 @@ class LoginBehavior():
         
     def verifyUserExistence(self):
         return User.objects.filter(
-            username=self.data.get('username'),
             email= self.data.get('email'),
         ).first()
     

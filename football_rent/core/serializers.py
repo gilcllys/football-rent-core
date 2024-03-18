@@ -21,3 +21,8 @@ class FootballFieldImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.FootballFieldImage
         fields = '__all__'
+        
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Payment
+        fields = '__all__'
