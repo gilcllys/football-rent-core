@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'football_rent.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'teste', 
+        'NAME': 'teste1', 
         'USER': 'postgres',
         'PASSWORD': '123456',
         'HOST': '127.0.0.1', 
@@ -137,8 +137,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
+        #apagar depois
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        #---------------------------------------
         'rest_framework.authentication.TokenAuthentication',
     ],
      'DEFAULT_PERMISSION_CLASSES': [

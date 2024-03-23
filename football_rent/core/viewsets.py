@@ -10,45 +10,28 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 
 
-class CustomAuthToken(ObtainAuthToken):
+class CreateUser(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
-        serializer = validate_serializers.Usuario_serializer_validate(data=request.data)
+        serializer = validate_serializers.UsuarioSerializerValidate(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-        user = behavior.UserBeehavior(data=data).run()
-        token = Token.objects.get_or_create(user=user[0])
-        return Response({
-            'token': token[0].pk,
-            'user_id': user[0].pk,
-            'email': user[0].email,
-            'message':user[1]
-        })
+        response = behavior.UserBehavior(data=data).run()
+        return Response(response)
 
+class LoginAuthToken(ObtainAuthToken):
 
+    def get(self, request, *args, **kwargs):
+        serializer = validate_serializers.LoginSerializerValidate(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        reponse = behavior.LoginBehavior(data=data).run()
+        return Response(reponse)
 
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = serializers.UsuarioSerializer
-
-    @action(detail=False, methods=['POST'])
-    def register_employees(self,request):
-        serializer = validate_serializers.Usuario_serializer_validate(data=request.data)
-        if serializer.is_valid():
-            data = serializer.validated_data
-            behavior.UserBeehavior(data=data).run()
-            return Response({"Response":serializer.data})
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
     
-    @action(detail=True, methods=['GET'])
-    def login(self,request):
-        pass
-    
-    @action(detail=True, methods=['POST'])
-    def logout(self,request):
-        pass
     
 class ReservaViewSet(viewsets.ModelViewSet):
     queryset = models.Reserva.objects.all()
@@ -61,3 +44,7 @@ class FootballFieldViewSet(viewsets.ModelViewSet):
 class FootballFieldImageViewSet(viewsets.ModelViewSet):
     queryset = models.FootballFieldImage.objects.all()
     serializer_class = serializers.FootballFieldImageSerializer
+    
+class PaymentViewSet(viewsets.ModelViewSet):
+    queryset = models.Payment.objects.all()
+    serializer_class = serializers.PaymentSerializer
